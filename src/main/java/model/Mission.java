@@ -1,14 +1,10 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@JacksonXmlRootElement(localName = "mission")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Mission {
     private String missionId;
@@ -17,16 +13,11 @@ public class Mission {
     private String outcome;
     private long damageCost;
     private Curse curse;
-
-    @JacksonXmlElementWrapper(localName = "sorcerers")
-    @JacksonXmlProperty(localName = "sorcerer")
     private List<Sorcerer> sorcerers = new ArrayList<>();
-
-    @JacksonXmlElementWrapper(localName = "techniques")
-    @JacksonXmlProperty(localName = "technique")
     private List<Technique> techniques = new ArrayList<>();
-
     private String note;
+    private String comment;
+
     public Mission() {}
 
     public String getMissionId() { return missionId; }
@@ -56,18 +47,16 @@ public class Mission {
     public String getNote() { return note; }
     public void setNote(String note) { this.note = note; }
 
-    @Override
-    public String toString() {
-        return "Mission{" +
-                "missionId='" + missionId + '\'' +
-                ", date=" + date +
-                ", location='" + location + '\'' +
-                ", outcome='" + outcome + '\'' +
-                ", damageCost=" + damageCost +
-                ", curse=" + curse +
-                ", sorcerers=" + sorcerers +
-                ", techniques=" + techniques +
-                ", note='" + note + '\'' +
-                '}';
+    public String getComment() { return comment; }
+    public void setComment(String comment) { this.comment = comment; }
+
+    public String getAnyNote() {
+        if (note != null && !note.isEmpty()) {
+            return note;
+        }
+        if (comment != null && !comment.isEmpty()) {
+            return comment;
+        }
+        return null;
     }
 }
