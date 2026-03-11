@@ -54,8 +54,6 @@ public class FileChooser {
         } else if (fileName.endsWith(".txt")) {
             return FileFormat.TEXT;
         }
-
-        // Если расширение не помогло, пробуем содержимое
         try {
             String contentStart = Files.readString(Path.of(file.getPath())).trim();
             if (contentStart.isEmpty()) {

@@ -27,11 +27,8 @@ public class Mission {
     private List<Technique> techniques = new ArrayList<>();
 
     private String note;
-
-    // Конструкторы
     public Mission() {}
 
-    // Геттеры и сеттеры
     public String getMissionId() { return missionId; }
     public void setMissionId(String missionId) { this.missionId = missionId; }
 
