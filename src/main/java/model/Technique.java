@@ -34,4 +34,13 @@ public class Technique {
 
     public long getDamage() { return damage; }
     public void setDamage(long damage) { this.damage = damage; }
+    public String getDisplayOwnerName() {
+        if (owner != null && owner.getName() != null && !owner.getName().isEmpty()) {
+            return owner.getName();
+        }
+        if (ownerName != null && !ownerName.isEmpty()) {
+            return ownerName + " (маг не указан в списке участников)";
+        }
+        return "владелец не указан";
+    }
 }

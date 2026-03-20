@@ -20,41 +20,55 @@ public class MissionPrettyPrinter {
             printField("Название", mission.getCurse().getName());
             printField("Уровень угрозы", mission.getCurse().getThreatLevel());
         } else {
-            System.out.println("   Нет информации о проклятии");
+            System.out.println(" Нет информации о проклятии");
         }
 
         printSection("УЧАСТНИКИ");
         if (mission.getSorcerers() != null && !mission.getSorcerers().isEmpty()) {
+            boolean hasValidSorcerers = false;
             for (int i = 0; i < mission.getSorcerers().size(); i++) {
                 Sorcerer s = mission.getSorcerers().get(i);
-                System.out.println("   Маг #" + (i + 1));
-                printField("   Имя", s.getName(), 3);
-                printField("   Ранг", s.getRank(), 3);
-                System.out.println();
+                // Показываем всех магов, у которых есть имя
+                if (s.getName() != null && !s.getName().isEmpty()) {
+                    hasValidSorcerers = true;
+                    System.out.println("  Маг " + (i + 1));
+                    printField("   Имя", s.getName(), 3);
+                    printField("   Ранг", s.getRank(), 3);
+                    System.out.println();
+                }
+            }
+            if (!hasValidSorcerers) {
+                System.out.println(" Нет информации об участниках");
             }
         } else {
-            System.out.println("    Нет информации об участниках");
+            System.out.println(" Нет информации об участниках");
         }
 
         printSection("ПРИМЕНЁННЫЕ ТЕХНИКИ");
         if (mission.getTechniques() != null && !mission.getTechniques().isEmpty()) {
             for (int i = 0; i < mission.getTechniques().size(); i++) {
                 Technique t = mission.getTechniques().get(i);
-                System.out.println(" Техника #" + (i + 1));
+
+                // Показываем только техники, у которых есть имя
+                if (t.getName() == null || t.getName().isEmpty()) {
+                    continue;
+                }
+
+                System.out.println(" Техника " + (i + 1));
                 printField("   Название", t.getName(), 3);
                 printField("   Тип", t.getType(), 3);
 
-                String ownerName = (t.getOwner() != null) ? t.getOwner().getName() : "неизвестен";
-                printField("   Владелец", ownerName, 3);
+                // ИСПОЛЬЗУЕМ НОВЫЙ МЕТОД ДЛЯ ПОЛУЧЕНИЯ ИМЕНИ ВЛАДЕЛЬЦА
+                printField("   Владелец", t.getDisplayOwnerName(), 3);
 
                 printField("   Урон", t.getDamage() + " ед.", 3);
                 System.out.println();
             }
         } else {
-            System.out.println("   Нет информации о техниках");
+            System.out.println("  Нет информации о техниках");
         }
 
-
+        // Примечания
         String anyNote = mission.getAnyNote();
         if (anyNote != null && !anyNote.isEmpty()) {
             printSection("ПРИМЕЧАНИЯ");
