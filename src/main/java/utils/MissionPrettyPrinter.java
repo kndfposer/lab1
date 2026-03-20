@@ -28,7 +28,6 @@ public class MissionPrettyPrinter {
             boolean hasValidSorcerers = false;
             for (int i = 0; i < mission.getSorcerers().size(); i++) {
                 Sorcerer s = mission.getSorcerers().get(i);
-                // Показываем всех магов, у которых есть имя
                 if (s.getName() != null && !s.getName().isEmpty()) {
                     hasValidSorcerers = true;
                     System.out.println("  Маг " + (i + 1));
@@ -48,8 +47,6 @@ public class MissionPrettyPrinter {
         if (mission.getTechniques() != null && !mission.getTechniques().isEmpty()) {
             for (int i = 0; i < mission.getTechniques().size(); i++) {
                 Technique t = mission.getTechniques().get(i);
-
-                // Показываем только техники, у которых есть имя
                 if (t.getName() == null || t.getName().isEmpty()) {
                     continue;
                 }
@@ -57,18 +54,13 @@ public class MissionPrettyPrinter {
                 System.out.println(" Техника " + (i + 1));
                 printField("   Название", t.getName(), 3);
                 printField("   Тип", t.getType(), 3);
-
-                // ИСПОЛЬЗУЕМ НОВЫЙ МЕТОД ДЛЯ ПОЛУЧЕНИЯ ИМЕНИ ВЛАДЕЛЬЦА
                 printField("   Владелец", t.getDisplayOwnerName(), 3);
-
                 printField("   Урон", t.getDamage() + " ед.", 3);
                 System.out.println();
             }
         } else {
             System.out.println("  Нет информации о техниках");
         }
-
-        // Примечания
         String anyNote = mission.getAnyNote();
         if (anyNote != null && !anyNote.isEmpty()) {
             printSection("ПРИМЕЧАНИЯ");

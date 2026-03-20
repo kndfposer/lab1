@@ -21,14 +21,31 @@ public class XmlMissionParser implements MissionParser {
     public Mission parse(File file) throws IOException {
         Mission mission = xmlMapper.readValue(file, Mission.class);
 
+        validateAndFixMission(mission);
         linkTechniquesToSorcerers(mission);
 
         return mission;
     }
 
+    private void validateAndFixMission(Mission mission) {
+        if (mission.getDamageCost() < 0) {
+            System.out.println("Предупреждение: ущерб миссии не может быть отрицательным (" +
+                    mission.getDamageCost() + "). Установлено значение 0");
+            mission.setDamageCost(0);
+        }
+
+        for (Technique technique : mission.getTechniques()) {
+            if (technique.getDamage() < 0) {
+                System.out.println("Предупреждение: урон техники '" +
+                        technique.getName() + "' не может быть отрицательным (" +
+                        technique.getDamage() + "). Установлено значение 0");
+                technique.setDamage(0);
+            }
+        }
+    }
+
     private void linkTechniquesToSorcerers(Mission mission) {
         for (Technique technique : mission.getTechniques()) {
-
             String ownerName = technique.getOwnerName();
 
             if (ownerName != null && !ownerName.isEmpty()) {
@@ -36,12 +53,11 @@ public class XmlMissionParser implements MissionParser {
                 if (owner != null) {
                     technique.setOwner(owner);
                 } else {
-                    System.out.println("Предупреждение: владелец техники '" + ownerName + "' не найден");
+                    System.out.println("Предупреждение: владелец техники '" + ownerName + "' не найден в списке участников");
                 }
             }
         }
     }
-
 
     private Sorcerer findSorcererByName(Mission mission, String name) {
         for (Sorcerer sorcerer : mission.getSorcerers()) {

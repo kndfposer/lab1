@@ -1,5 +1,6 @@
 package parser;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import model.Mission;
@@ -15,16 +16,34 @@ public class JsonMissionParser implements MissionParser {
     public JsonMissionParser() {
         this.objectMapper = new ObjectMapper();
         this.objectMapper.registerModule(new JavaTimeModule());
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Override
     public Mission parse(File file) throws IOException {
-
         Mission mission = objectMapper.readValue(file, Mission.class);
 
+        validateAndFixMission(mission);
         linkTechniquesToSorcerers(mission);
 
         return mission;
+    }
+
+    private void validateAndFixMission(Mission mission) {
+        if (mission.getDamageCost() < 0) {
+            System.out.println(" Предупреждение: ущерб миссии не может быть отрицательным (" +
+                    mission.getDamageCost() + "). Установлено значение 0");
+            mission.setDamageCost(0);
+        }
+
+        for (Technique technique : mission.getTechniques()) {
+            if (technique.getDamage() < 0) {
+                System.out.println(" Предупреждение: урон техники '" +
+                        technique.getName() + "' не может быть отрицательным (" +
+                        technique.getDamage() + "). Установлено значение 0");
+                technique.setDamage(0);
+            }
+        }
     }
 
     private void linkTechniquesToSorcerers(Mission mission) {
@@ -35,6 +54,8 @@ public class JsonMissionParser implements MissionParser {
                 Sorcerer owner = findSorcererByName(mission, ownerName);
                 if (owner != null) {
                     technique.setOwner(owner);
+                } else {
+                    System.out.println("Предупреждение : владелец техники '" + ownerName + "' не найден в списке участников");
                 }
             }
         }
